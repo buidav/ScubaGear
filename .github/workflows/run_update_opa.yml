@@ -19,6 +19,15 @@ jobs:
         run: |
           $latest_release = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           . .\versions.ps1
+          (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
+          # Commit and create PR (assumes 'main' as default branch and 'update-opa-version' as PR branch)
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git checkout -b update-opa-version
+          git add versions.ps1
+          git commit -m "Update OPA version to $latest_release"
+          git push origin update-opa-version
+          
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
