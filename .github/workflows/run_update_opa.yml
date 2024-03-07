@@ -27,8 +27,6 @@ jobs:
           git add versions.ps1
           git commit -m "Update OPA version to $latest_release"
           git push origin update-opa-version
-          
-
       - name: create pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
