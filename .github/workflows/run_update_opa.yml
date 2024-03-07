@@ -28,11 +28,8 @@ jobs:
           git commit -m "Update OPA version to $latest_release"
           git push origin update-opa-version
           
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-            token: ${{ secrets.GITHUB_TOKEN }}
-            commit-message: "Update OPA version to $latest_release"
-            title: "Update OPA version"
-            branch: "main"
-            base: "update-opa-version"
+
+      - name: create pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: gh pr create -B main -H update-opa-version --title 'Merge opa update into main' --body 'Created by Github action'
