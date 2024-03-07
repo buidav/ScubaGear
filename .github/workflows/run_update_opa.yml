@@ -37,5 +37,5 @@ jobs:
                   "head" = "update-opa-version"
                   "base" = "main"
               } | ConvertTo-Json
-              Invoke-RestMethod -Method Post -Headers @{Authorization = "token $GH_TOKEN"} -Uri https://api.github.com/repos/<your-username>/<your-repo>/pulls -Body $body
+              Invoke-RestMethod -Method Post -Headers @{Authorization = "token $GH_TOKEN"} -Uri https://api.github.com/repos/<buidav>/ScubaGear>/pulls -Body $body
           }
