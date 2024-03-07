@@ -34,5 +34,5 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
             commit-message: "Update OPA version to $latest_release"
             title: "Update OPA version"
-            branch: "update-opa-version"
-            base: "main"
+            branch: "main"
+            base: "update-opa-version"
