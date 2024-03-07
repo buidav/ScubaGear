@@ -35,3 +35,4 @@ jobs:
             commit-message: "Update OPA version to $latest_release"
             title: "Update OPA version"
             branch: "update-opa-version"
+            base: "main"
