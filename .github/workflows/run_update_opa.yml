@@ -8,6 +8,7 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: write
+      pull-requests: write 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,24 +19,10 @@ jobs:
         run: |
           $latest_release = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           . .\versions.ps1
-          $current_version = $opa_version
-
-          if ($current_version -ne $latest_release) {
-              (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
-
-              # Commit and create PR (assumes 'main' as default branch and 'update-opa-version' as PR branch)
-              git config --global user.email "action@github.com"
-              git config --global user.name "GitHub Action"
-              git checkout -b update-opa-version
-              git add versions.ps1
-              git commit -m "Update OPA version to $latest_release"
-              git push origin update-opa-version
-
-              # Create PR using GitHub API
-              $body = @{
-                  "title" = "Update OPA version"
-                  "head" = "update-opa-version"
-                  "base" = "main"
-              } | ConvertTo-Json
-              Invoke-RestMethod -Method Post -Headers @{Authorization = "token $GH_TOKEN"} -Uri https://api.github.com/repos/<buidav>/ScubaGear>/pulls -Body $body
-          }
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
+            commit-message: "Update OPA version to $latest_release"
+            title: "Update OPA version"
+            branch: "update-opa-version"
