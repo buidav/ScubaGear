@@ -1,0 +1,39 @@
+name: Check OPA version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-version:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check OPA version and create PR if outdated
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $latest_release = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
+          . .\versions.ps1
+          $current_version = $opa_version
+
+          if ($current_version -ne $latest_release) {
+              (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
+
+              # Commit and create PR (assumes 'main' as default branch and 'update-opa-version' as PR branch)
+              git config --global user.email "action@github.com"
+              git config --global user.name "GitHub Action"
+              git checkout -b update-opa-version
+              git add versions.ps1
+              git commit -m "Update OPA version to $latest_release"
+              git push origin update-opa-version
+
+              # Create PR using GitHub API
+              $body = @{
+                  "title" = "Update OPA version"
+                  "head" = "update-opa-version"
+                  "base" = "main"
+              } | ConvertTo-Json
+              Invoke-RestMethod -Method Post -Headers @{Authorization = "token $GH_TOKEN"} -Uri https://api.github.com/repos/<your-username>/<your-repo>/pulls -Body $body
+          }
