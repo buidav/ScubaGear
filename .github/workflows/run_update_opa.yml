@@ -29,14 +29,11 @@ jobs:
               Write-Output "The branch already exists exists exiting workflow" 
               exit 0 
           }
-          else {
-                git config --global user.email "action@github.com"
-                git config --global user.name "GitHub Action"
-                git checkout -b $OPAVersionBumpBranch
-                git add .
-                git commit -m "Update OPA version to $LatestOPARelease"
-                git push origin $OPAVersionBumpBranch
-          }
-      - name: Create PR
-        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git checkout -b $OPAVersionBumpBranch
+          git add .
+          git commit -m "Update OPA version to $LatestOPARelease"
+          git push origin $OPAVersionBumpBranch
           gh pr create -B main -H $OPAVersionBumpBranch --title 'Bump OPA version to $LatestOPARelease' --body 'Created by Github action'
+          
