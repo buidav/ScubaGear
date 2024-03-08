@@ -24,7 +24,7 @@ jobs:
           . .\versions.ps1
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
           git branch --list $($OPAVersionBumpBranch)
-          $OPABranchExists = git branch --list $($OPAVersionBumpBranch)
+          $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
           Write-Output "DO I BREAK HERE1"
           Write-Host $OPBranchExists
           Write-Output "DO I BREAK HERE2"
