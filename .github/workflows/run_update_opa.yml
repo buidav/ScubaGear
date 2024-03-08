@@ -21,7 +21,8 @@ jobs:
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"
           . .\versions.ps1
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
-          $OPABranchExists = git branch --list $OPAVersionBumpBranch
+          $OPABranchExists = git branch --list $($OPAVersionBumpBranch)
+          Write-Output $OPABranchExists
           if ($OPABranchExists) {
               Write-Output "The branch already exists exiting." 
               exit 0 
