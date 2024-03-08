@@ -22,19 +22,19 @@ jobs:
           . .\versions.ps1
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
           $OPABranchExists = git branch --list $($OPAVersionBumpBranch)
-          Write-Output $OPABranchExists
+          Write-Host $OPBranchExists
           if ($OPABranchExists) {
-              Write-Output "The branch already exists exiting." 
+              Write-Host "The branch already exists exiting." 
               exit 0 
           }
           else {
-                git config --global user.email "action@github.com"
-                git config --global user.name "GitHub Action"
-                git checkout -b $OPAVersionBumpBranch
-                git add .
-                git commit -m "Update OPA version to $LatestOPARelease"
-                git push origin $OPAVersionBumpBranch
+                # git config --global user.email "action@github.com"
+                # git config --global user.name "GitHub Action"
+                # git checkout -b $OPAVersionBumpBranch
+                # git add .
+                # git commit -m "Update OPA version to $LatestOPARelease"
+                # git push origin $OPAVersionBumpBranch
           }
       - name: Create PR
         run: |
-          gh pr create -B main -H $OPAVersionBumpBranch --title 'Bump OPA version to $LatestOPARelease' --body 'Created by Github action'
+          # gh pr create -B main -H $OPAVersionBumpBranch --title 'Bump OPA version to $LatestOPARelease' --body 'Created by Github action'
