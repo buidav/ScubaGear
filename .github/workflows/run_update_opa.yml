@@ -13,19 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Check for OPA version and create PR if outdated
+      - name: Check IF OPA version 
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
+          $OPAVersionBumpBranch = opa-version-bump-$($LatestOPARelease)h
           . .\versions.ps1
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
-          # Commit and create PR (assumes 'main' as default branch and 'update-opa-version' as PR branch)
+          $OPABranchExists = git branch --list $OPAVersionBumpBranch
+          if ($OPABranchExists) {
+              exit 0 
+          }
+          
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b opa-version-bump-$($LatestOPARelease)
           git add .
           git commit -m "Update OPA version to $LatestOPARelease"
           git push origin opa-version-bump-$($LatestOPARelease)
-
+      - name: Create PR
+        run: |
           gh pr create -B main -H opa-version-bump-$($LatestOPARelease) --title 'Bump OPA version to $LatestOPARelease' --body 'Created by Github action'
+          
