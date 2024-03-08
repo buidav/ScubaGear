@@ -19,14 +19,15 @@ jobs:
         run: |
           Write-HOST "HELLLLOOOOOO"
           Write-Output "DO YOU WORK"
-          $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
-           Write-Output "DO I BREAK HERE1"
+          $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_nam
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"
           . .\versions.ps1
-          Write-Output "DO I BREAK HERE2"
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
+          git branch --list $($OPAVersionBumpBranch)
           $OPABranchExists = git branch --list $($OPAVersionBumpBranch)
+          Write-Output "DO I BREAK HERE1"
           Write-Host $OPBranchExists
+          Write-Output "DO I BREAK HERE2"
           if ($OPABranchExists) {
               Write-Host "The branch already exists exiting." 
               exit 0 
