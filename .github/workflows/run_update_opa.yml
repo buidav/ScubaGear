@@ -25,11 +25,8 @@ jobs:
           (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
           git branch --list $($OPAVersionBumpBranch)
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
-          Write-Output "DO I BREAK HERE1"
-          Write-Host $OPBranchExists
-          Write-Output "DO I BREAK HERE2"
           if ($OPABranchExists) {
-              Write-Host "The branch already exists exiting." 
+              Write-Output "The branch already exists exists exiting workflow" 
               exit 0 
           }
           else {
