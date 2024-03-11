@@ -73,9 +73,9 @@ jobs:
           $Motivation = '<!-- Why is this change required\? -->'
           $Testing = '<!-- see how your change affects other areas of the code, etc. -->'
           
-          $NewDescription = "This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README. Please fill out the rest of the template that the Action did not cover. `n"
-          $NewMotivation = "Bump ScubaGear's module version to v${env:NEW_VERSION_NUMBER} before the next release`n"
-          $NewTesting = "A human should still check if the version bumping was successful.`n"
+          $NewDescription = "- This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README.`n - Please fill out the rest of the template that the Action did not cover. `n"
+          $NewMotivation = "- Bump ScubaGear's module version to v${env:NEW_VERSION_NUMBER} before the next release`n"
+          $NewTesting = "- A human should still check if the version bumping was successful by running ScubaGear.`n"
 
           $Body = "This is a test body fear me"
           $PRTemplateContent = (Get-Content -Path $PRTemplatePath) | ForEach-Object {
