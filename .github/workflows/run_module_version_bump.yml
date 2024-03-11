@@ -68,15 +68,20 @@ jobs:
           # Create the PR body
           #
           $PRTemplatePath = '.\.github\pull_request_template.md'
+
+          $Description = '<!-- Describe the "what" of your changes in detail. -->'
+          $Motivation = '<!-- Why is this change required? -->'
+          $Testing = '<!-- see how your change affects other areas of the code, etc. -->'
+          
           $NewDescription = "This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README. Please fill out the rest of the template that the Action did not cover. "
           $NewMotivation = "Bump ScubaGear's module version to ${env:NEW_VERSION_NUMBER} before the next release"
           $NewTesting = "A human should still check if the version bumping was successful."
+          
           $PRTemplateContent = (Get-Content -Path $PRTemplatePath) | ForEach-Object {
             $DescriptionRegex = $_ -match $Description
             $MotivationRegex = $_ -match $Motivation
             $TestingRegex = $_ -match $Testing
             if ($DescriptionRegex) {
-                 Write-Output "AAAAH"
                   $_ -replace $Description, $NewDescription
             } 
             elseif ($MotivationRegex) {
@@ -98,5 +103,5 @@ jobs:
           git add .
           git commit -m "Update ScubaGear version to ${env:NEW_VERSION_NUMBER}"
           git push origin $ScubaGearVersionBumpBranch
-          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${$PRTemplateContent}" --add-label "version bump"
+          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${$PRTemplateContent}" --label "version bump"
           
