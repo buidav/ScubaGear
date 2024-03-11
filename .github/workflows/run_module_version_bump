@@ -1,1 +1,69 @@
+name: 0AVersion Bump
 
+on:
+  workflow_dispatch:
+    inputs:
+      newVersionNumber:
+        description: "New Version number (e.g., 1.2.4)"
+        required: true
+        type: string
+
+jobs:
+  check-version:
+    runs-on: windows-latest
+    env: 
+      NEW_VERSION_NUMBER = ${{ inputs.newVersionNumber }}
+    permissions:
+      contents: write
+      pull-requests: write 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Bump ScubaGear Version Number
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Replace ScubaGear module version in the manifest
+          $ManifestPath = '.\PowerShell\ScubaGear\ScubaGear.psd1'
+          $VersionRegex = "\'\d+\.\d+\.\d+\'"
+          (Get-Content -Path $ManifestPath) | ForEach-Object {
+            $ModuleVersionRegex = $_ -match "ModuleVersion = $($VersionRegex)"
+            if ($ModuleVersionRegex) {
+                $_ -replace $VersionRegex, '1.2.0'
+            } 
+           else {
+              $_
+             }
+          } | Set-Content -Path $ManifestPath
+
+          # Replace ScubaGear module version in the README
+          $READMEPath = '.\README.md'
+          $BadgeRegex = "ScubaGear-v\d+\.\d+\.\d+"
+          $ZipRegex = "ScubaGear-v\d+\-\d+\-\d+.zip"
+          (Get-Content -Path $READMEPath) | foreach-Object {
+             $BadgeVerMatch = $_ -match $BadgeRegex
+    $ZipVerMatch = $_ -match $ZipRegex
+    if ($BadgeVerMatch) {
+        $_ -replace $BadgeRegex, "ScubaGear-v1.2.0"
+    } 
+    elseif ($ZipVerMatch) {
+        $_ -replace $ZipRegex, 'ScubaGear-v1-2-0.zip'
+    }
+    else {
+        $_
+    }
+} | Set-Content -Path $READMEPath
+          $ScubaGearVersionBumpBranch = "scubagear-version-bump-$($NEW_VERSION_NUMBER)"
+          git branch --list $($ScubaGearVersionBumpBranch)
+          $ScubaGearBranchExists = git ls-remote --exit-code --heads origin $(NEW_VERSION_NUMBER)
+
+          # Create the PR
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git checkout -b $ScubaGearVersionBumpBranch
+          git add .
+          git commit -m "Update ScubaGear version to NEW_VERSION_NUMBER"
+          git push origin $ScubaGearVersionBumpBranch
+          gh pr create -B main -H $ScubaGearVersionBumpBranch --title 'Bump ScubaGear version to $LatestOPARelease' --body 'Created by Github action'
+          
