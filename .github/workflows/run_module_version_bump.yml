@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  check-version:
+  module-version-bump:
     runs-on: windows-latest
     env: 
       NEW_VERSION_NUMBER: ${{ inputs.newVersionNumber }}
