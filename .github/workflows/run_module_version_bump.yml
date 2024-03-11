@@ -65,8 +65,9 @@ jobs:
           } | Set-Content -Path $READMEPath
 
           # 
-          # Create the PR 
-          # 
+          # Create the PR body
+          #
+          $PRTemplatePath = '.\.github\pull_request_template.md'
           $NewDescription = "This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README. Please fill out the rest of the template that the Action did not cover. "
           $NewMotivation = "Bump ScubaGear's module version to ${env:NEW_VERSION_NUMBER} before the next release"
           $NewTesting = "A human should still check if the version bumping was successful."
