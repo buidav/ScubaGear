@@ -72,6 +72,7 @@ jobs:
           $Description = '<!-- Describe the "what" of your changes in detail. -->'
           $Motivation = '<!-- Why is this change required\? -->'
           $Testing = '<!-- see how your change affects other areas of the code, etc. -->'
+          $RemoveHeader = '# <!-- Use the title to describe PR changes in the imperative mood --> #'
           
           $NewDescription = "- This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README.`n - Please fill out the rest of the template that the Action did not cover. `n"
           $NewMotivation = "- Bump ScubaGear's module version to v${env:NEW_VERSION_NUMBER} before the next release`n"
@@ -82,6 +83,7 @@ jobs:
             $DescriptionRegex = $_ -match $Description
             $MotivationRegex = $_ -match $Motivation
             $TestingRegex = $_ -match $Testing
+            $RemoveHeaderRegex = $_ -match $RemoveHeader # removes unneeded new line
             if ($DescriptionRegex) {
                   $_ -replace $Description, $NewDescription
             } 
@@ -90,7 +92,10 @@ jobs:
             } 
             elseif ($TestingRegex) {
                 $_ -replace $Testing, $NewTesting
-            } 
+            }
+            elseif ($RemoveHeaderRegex) {
+               $_ -replace $ ($RemoveHeader, ""
+            }
             else {
                    $_ + "`n"
                  }
