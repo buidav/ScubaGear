@@ -70,7 +70,7 @@ jobs:
           $PRTemplatePath = '.\.github\pull_request_template.md'
 
           $Description = '<!-- Describe the "what" of your changes in detail. -->'
-          $Motivation = '<!-- Why is this change required? -->'
+          $Motivation = '<!-- Why is this change required\? -->'
           $Testing = '<!-- see how your change affects other areas of the code, etc. -->'
           
           $NewDescription = "This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README. Please fill out the rest of the template that the Action did not cover. `n"
