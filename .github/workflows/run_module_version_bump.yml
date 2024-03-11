@@ -1,4 +1,4 @@
-name: ScubaGear Version Bump
+name: Module Version Bump
 
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
             $ModuleVersionRegex = $_ -match "ModuleVersion = $($VersionRegex)"
             if ($ModuleVersionRegex) { 
                 $_ -match $VersionRegex
-                $PreviousVersion = $matches[0]
+                $PreviousVersion = $matches[0] -replace "'", ""
                 $_ -replace $VersionRegex, '${env:NEW_VERSION_NUMBER}'
             } 
            else {
@@ -69,5 +69,5 @@ jobs:
           git add .
           git commit -m "Update ScubaGear version to ${env:NEW_VERSION_NUMBER}"
           git push origin $ScubaGearVersionBumpBranch
-          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear version from $($PreviousVersion) to ${env:NEW_VERSION_NUMBER}" --body 'Created by Github action'
+          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body 'Created by Github action'
           
