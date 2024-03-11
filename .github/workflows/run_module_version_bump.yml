@@ -56,16 +56,15 @@ jobs:
                    $_
              }
           } | Set-Content -Path $READMEPath
-          $ScubaGearVersionBumpBranch = "scubagear-version-bump-$($NEW_VERSION_NUMBER)"
-          git branch --list $($ScubaGearVersionBumpBranch)
-          $ScubaGearBranchExists = git ls-remote --exit-code --heads origin $(NEW_VERSION_NUMBER)
-
+          
+          
           # Create the PR
+          $ScubaGearVersionBumpBranch = "scubagear-version-bump-${env:NEW_VERSION_NUMBER}" 
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b $ScubaGearVersionBumpBranch
           git add .
-          git commit -m "Update ScubaGear version to NEW_VERSION_NUMBER"
+          git commit -m "Update ScubaGear version to ${env:NEW_VERSION_NUMBER}"
           git push origin $ScubaGearVersionBumpBranch
           gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear version to ${env:NEW_VERSION_NUMBER}" --body 'Created by Github action'
           
