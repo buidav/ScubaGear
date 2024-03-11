@@ -74,7 +74,7 @@ jobs:
           $Testing = '<!-- see how your change affects other areas of the code, etc. -->'
           
           $NewDescription = "This PR was create by a GitHub Action to bump ScubaGear's module version in the manifest and the README. Please fill out the rest of the template that the Action did not cover. `n"
-          $NewMotivation = "Bump ScubaGear's module version to ${env:NEW_VERSION_NUMBER} before the next release`n"
+          $NewMotivation = "Bump ScubaGear's module version to v${env:NEW_VERSION_NUMBER} before the next release`n"
           $NewTesting = "A human should still check if the version bumping was successful.`n"
 
           $Body = "This is a test body fear me"
@@ -104,4 +104,4 @@ jobs:
           git add .
           git commit -m "Update ScubaGear version to ${env:NEW_VERSION_NUMBER}"
           git push origin $ScubaGearVersionBumpBranch
-          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${PRTemplateContent}"
+          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${PRTemplateContent}" --label "version bump"
