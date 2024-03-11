@@ -94,7 +94,7 @@ jobs:
                 $_ -replace $Testing, $NewTesting
             }
             elseif ($RemoveHeaderRegex) {
-               $_ -replace $ ($RemoveHeader, ""
+               $_ -replace $RemoveHeader, ""
             }
             else {
                    $_ + "`n"
