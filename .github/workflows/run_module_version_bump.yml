@@ -12,7 +12,7 @@ jobs:
   check-version:
     runs-on: windows-latest
     env: 
-      NEW_VERSION_NUMBER = ${{ inputs.newVersionNumber }}
+      NEW_VERSION_NUMBER: ${{ inputs.newVersionNumber }}
     permissions:
       contents: write
       pull-requests: write 
@@ -29,8 +29,8 @@ jobs:
           $VersionRegex = "\'\d+\.\d+\.\d+\'"
           (Get-Content -Path $ManifestPath) | ForEach-Object {
             $ModuleVersionRegex = $_ -match "ModuleVersion = $($VersionRegex)"
-            if ($ModuleVersionRegex) {
-                $_ -replace $VersionRegex, '1.2.0'
+            if ($ModuleVersionRegex) { 
+                $_ -replace $VersionRegex, ${env:NEW_VERSION_NUMBER}
             } 
            else {
               $_
@@ -41,14 +41,16 @@ jobs:
           $READMEPath = '.\README.md'
           $BadgeRegex = "ScubaGear-v\d+\.\d+\.\d+"
           $ZipRegex = "ScubaGear-v\d+\-\d+\-\d+.zip"
-          (Get-Content -Path $READMEPath) | foreach-Object {
+          $ZipVerReplace = "ScubaGear-v${env:NEW_VERSION_NUMBER}" -replace '\.', '-'
+          $ZipVerReplace = $ZipVerReplace + '.zip'
+          (Get-Content -Path $READMEPath) | ForEach-Object {
              $BadgeVerMatch = $_ -match $BadgeRegex
              $ZipVerMatch = $_ -match $ZipRegex
              if ($BadgeVerMatch) {
-                $_ -replace $BadgeRegex, "ScubaGear-v1.2.0"
+                $_ -replace $BadgeRegex, "ScubaGear-v${env:NEW_VERSION_NUMBER}"
              } 
              elseif ($ZipVerMatch) {
-                   $_ -replace $ZipRegex, 'ScubaGear-v1-2-0.zip'
+                   $_ -replace $ZipRegex, $ZipVerReplace
              }
              else {
                    $_
