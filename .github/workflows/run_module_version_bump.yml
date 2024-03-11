@@ -109,4 +109,4 @@ jobs:
           git add .
           git commit -m "Update ScubaGear version to ${env:NEW_VERSION_NUMBER}"
           git push origin $ScubaGearVersionBumpBranch
-          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${PRTemplateContent}" --label "version bump"
+          gh pr create -B main -H $ScubaGearVersionBumpBranch --title "Bump ScubaGear module version from v$($PreviousVersion) to v${env:NEW_VERSION_NUMBER}" --body "${PRTemplateContent}" --label "version bump" --project "ScubaGear M365"
