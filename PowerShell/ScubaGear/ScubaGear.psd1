@@ -12,7 +12,7 @@
 RootModule = './ScubaGear.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.1'
+ModuleVersion = '16.16.16'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Desktop'
