@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check-version:
+  update-opa-dependency:
     runs-on: windows-latest
     permissions:
       contents: write
@@ -17,11 +17,12 @@ jobs:
       - name: Determine if OPA update is required
         id: determine-update-required
         run: |
-  
+          Write-Host TESTME
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           git branch --list $($OPAVersionBumpBranch)
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
+          Write-Host $OPABranchExists
           if ($OPABranchExists) {
               Write-Output "The branch already exists exists exiting workflow" 
               exit 0 
