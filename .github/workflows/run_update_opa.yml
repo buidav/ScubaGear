@@ -14,12 +14,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with: 
-          persist-credentials: false
-
       - name: Determine if OPA update is required
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: determine-update-required
         shell: powershell
         run: |
@@ -30,7 +25,7 @@ jobs:
           git branch --list $($OPAVersionBumpBranch)
           WRITE-HOST $OPAVersionBumpBranch
           WRITE-HOST I GET HERE
-          $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
+          $OPABranchExists = git ls-remote --heads origin $($OPAVersionBumpBranch)
           WRITE-HOST fail here somewhere
           Write-Host $OPABranchExists
           # if ($OPABranchExists) {
