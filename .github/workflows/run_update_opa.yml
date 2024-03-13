@@ -17,13 +17,23 @@ jobs:
 
       - name: Determine if OPA update is required
         id: determine-update-required
+        continue-on-error: true
         shell: powershell
         run: |
           Write-Host TESTME
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          $branchExists = git ls-remote --exit-code --heads https://github.com/buidav/ScubaGear.git $OPAVersionBumpBranch
+          $OPABranchExists = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
+          if ($LASTEXITCODE -eq 0) {
+            Write-Output "Branch exists"
+          } else {
+            Write-Output "Branch does not exist"
+          }
+          if ($OPABranchExists) {
+              Write-Output "The branch already exists exists exiting workflow" 
+              exit 0 
+          }
           if ($LASTEXITCODE -eq 0) {
             Write-Output "Branch exists"
           } else {
