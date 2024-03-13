@@ -25,9 +25,9 @@ jobs:
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           git branch --list $($OPAVersionBumpBranch)
           WRITE-HOST I GET HERE
-          # $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
-          # WRITE-HOST fail here somewhere
-          # Write-Host $OPABranchExists
+          $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
+          WRITE-HOST fail here somewhere
+          Write-Host $OPABranchExists
           # if ($OPABranchExists) {
           #     Write-Output "The branch already exists exists exiting workflow" 
           #     exit 0 
