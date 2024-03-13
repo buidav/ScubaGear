@@ -14,7 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        with: 
+          persist-credentials: false
+
       - name: Determine if OPA update is required
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
