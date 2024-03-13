@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Determine if OPA update is required
         id: determine-update-required
         shell: powershell
@@ -25,7 +26,8 @@ jobs:
           git branch --list $($OPAVersionBumpBranch)
           WRITE-HOST $OPAVersionBumpBranch
           WRITE-HOST I GET HERE
-          $OPABranchExists = git ls-remote --heads origin $($OPAVersionBumpBranch)
+          $OPABranchExists = $false
+          # $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
           WRITE-HOST fail here somewhere
           Write-Host $OPABranchExists
           # if ($OPABranchExists) {
