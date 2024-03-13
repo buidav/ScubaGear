@@ -16,6 +16,8 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Determine if OPA update is required
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: determine-update-required
         shell: powershell
         run: |
