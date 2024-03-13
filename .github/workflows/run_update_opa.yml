@@ -9,25 +9,29 @@ jobs:
     permissions:
       contents: write
       pull-requests: write 
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Check IF OPA version 
-        esnv:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Determine if OPA update is required
+        id: determine-update-required
         run: |
-          #   
+  
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
-          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"
-          . .\versions.ps1
-          (Get-Content -Path versions.ps1 -Raw) -replace $current_version,$latest_release | Set-Content -Path versions.ps1
+          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           git branch --list $($OPAVersionBumpBranch)
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
           if ($OPABranchExists) {
               Write-Output "The branch already exists exists exiting workflow" 
               exit 0 
           }
+          echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
+          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
+      - name: Create the OPA update PR
+        run: |
+          $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
+          $OPABranchExists = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b $OPAVersionBumpBranch
