@@ -23,7 +23,7 @@ jobs:
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          $PR = gh pr list --repo "$env:GITHUB_REPOSITORY" --head "$OPAVersionBumpBranch" --base 'master' --json title --jq 'length')
+          $PR = gh pr list --repo "$env:GITHUB_REPOSITORY" --head "$OPAVersionBumpBranch" --base 'master' --json title --jq 'length'
           Write-Host $PR
           WRITE-HOST fail before vars
           echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
