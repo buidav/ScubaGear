@@ -13,7 +13,7 @@ jobs:
       - name: Check if branch exists
         run: |
           $repoUrl = git remote get-url origin
-          $branchExists = git ls-remote --exit-code --heads $repoUrl main
+          $branchExists = git ls-remote --exit-code --heads $repoUrl dev
           if ($LASTEXITCODE -eq 0) {
             Write-Output "Branch exists"
           } else {
