@@ -24,6 +24,7 @@ jobs:
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           git branch --list $($OPAVersionBumpBranch)
+          WRITE-HOST $OPAVersionBumpBranch
           WRITE-HOST I GET HERE
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
           WRITE-HOST fail here somewhere
