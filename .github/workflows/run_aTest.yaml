@@ -1,0 +1,22 @@
+name: 0Test]
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check if branch exists
+        run: |
+          $repoUrl = git remote get-url origin
+          $branchExists = git ls-remote --exit-code --heads $repoUrl main
+          if ($LASTEXITCODE -eq 0) {
+            Write-Output "Branch exists"
+          } else {
+            Write-Output "Branch does not exist"
+          }
+        shell: pwsh
