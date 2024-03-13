@@ -29,7 +29,7 @@ jobs:
           # $OPABranchExists = $false
           $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
           WRITE-HOST fail here somewhere
-          Write-Host $OPABranchExists
+          # Write-Host $OPABranchExists
           # if ($OPABranchExists) {
           #     Write-Output "The branch already exists exists exiting workflow" 
           #     exit 0 
