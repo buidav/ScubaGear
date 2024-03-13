@@ -31,7 +31,7 @@ jobs:
         run: |
           Write-Host "FAIL FIRST STEP"
           $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
-          $OPABranchExists = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
+          $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b $OPAVersionBumpBranch
