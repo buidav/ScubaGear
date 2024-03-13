@@ -23,13 +23,16 @@ jobs:
           git branch --list $($OPAVersionBumpBranch)
           WRITE-HOST I GET HERE
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
+          WRITE-HOST fail here somewhere
           Write-Host $OPABranchExists
           if ($OPABranchExists) {
               Write-Output "The branch already exists exists exiting workflow" 
               exit 0 
           }
+          WRITE-HOST fail before vars
           echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
+          WRITE-HOST FAIL AFTER VARS
       - name: Create the OPA update PR
         run: |
           $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
