@@ -14,9 +14,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check IF OPA version 
-        env:
+        esnv:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          #   
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"
           . .\versions.ps1
