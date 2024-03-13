@@ -21,6 +21,7 @@ jobs:
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           git branch --list $($OPAVersionBumpBranch)
+          WRITE-HOST I GET HERE
           $OPABranchExists = git ls-remote --exit-code --heads origin $($OPAVersionBumpBranch)
           Write-Host $OPABranchExists
           if ($OPABranchExists) {
