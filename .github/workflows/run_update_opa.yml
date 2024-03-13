@@ -27,7 +27,13 @@ jobs:
           WRITE-HOST $OPAVersionBumpBranch
           WRITE-HOST I GET HERE
           # $OPABranchExists = $false
-          $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
+          try {
+            $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
+          }
+          catch {
+            Write-Host "error occured"
+          }
+        
           WRITE-HOST fail here somewhere
           # Write-Host $OPABranchExists
           # if ($OPABranchExists) {
