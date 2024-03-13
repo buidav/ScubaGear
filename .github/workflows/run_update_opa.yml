@@ -23,8 +23,12 @@ jobs:
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          $PR = gh pr list --repo "$env:GITHUB_REPOSITORY" --head "$OPAVersionBumpBranch" --base 'master' --json title --jq 'length'
-          Write-Host $PR
+          $branchExists = git ls-remote --exit-code --heads https://github.com/buidav/ScubaGear.git $OPAVersionBumpBranch
+          if ($LASTEXITCODE -eq 0) {
+            Write-Output "Branch exists"
+          } else {
+            Write-Output "Branch does not exist"
+          }
           WRITE-HOST fail before vars
           echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
