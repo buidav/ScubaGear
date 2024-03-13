@@ -14,8 +14,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      
       - name: Determine if OPA update is required
         id: determine-update-required
+        shell: powershell
         run: |
           Write-Host TESTME
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
@@ -30,8 +32,8 @@ jobs:
               exit 0 
           }
           WRITE-HOST fail before vars
-          echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
-          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
+          # echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
+          # echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
           WRITE-HOST FAIL AFTER VARS
       - name: Create the OPA update PR
         run: |
