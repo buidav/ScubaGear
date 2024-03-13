@@ -23,14 +23,6 @@ jobs:
           $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          git config credential.helper
-        
-          WRITE-HOST fail here somewhere
-          Write-Host $OPABranchExists
-          if ($OPABranchExists) {
-              Write-Output "The branch already exists exists exiting workflow" 
-              exit 0 
-          }
           WRITE-HOST fail before vars
           echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
