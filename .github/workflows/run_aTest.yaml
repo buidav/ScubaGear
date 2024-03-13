@@ -11,6 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check if branch exists
+        continue-on-error: true
         run: |
           $repoUrl = git remote get-url origin
           $branchExists = git ls-remote --exit-code --heads $repoUrl dev
