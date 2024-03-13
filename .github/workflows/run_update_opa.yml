@@ -20,13 +20,65 @@ jobs:
         shell: powershell
         run: |
           Write-Host TESTME
-          $LatestOPARelease = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
+          $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           Write-Host $LatestOPARelease
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           WRITE-HOST fail before vars
-          echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
+          echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
           WRITE-HOST FAIL AFTER VARS
+      - name: Update OPA version in ScubaGear
+        run: |
+          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          $OPAVersionPath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
+          $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
+          $ExpectedVersionPattern = "ExpectedVersion = $OPAVer"
+          
+          $SupportModule = Get-Content $OPAVersionPath -Raw
+          
+          # Find our current OPA version using some dirty string
+          # manipulation
+          $CurrentVersion = '0.0.0'
+          if ($SupportModule -match $ExpectedVersionPattern) {
+              $CurrentVersion = ($Matches[0] -split "=")[1] -replace " ", ""
+              $CurrentVersion = $CurrentVersion -replace "'", ""
+          }
+
+          $MAXIMUM_VER_PER_LINE = 8 # Handle long lines of acceptable versions
+          $END_VERSIONS_COMMENT = "# End Versions" # EOL comment in the PowerShell file
+          $EndAcceptableVerRegex = ".*$END_VERSIONS_COMMENT"
+          $Replace = $false # replace the current version or not
+
+          (Get-Content -Path $OPAVersionPath) | ForEach-Object {
+              $ExpectedVerMatch = $_ -match "ExpectedVersion = "
+              $EndAcceptableVarMatch = $_ -match $EndAcceptableVerRegex
+              if ($ExpectedVerMatch -and ($LatestOPAVersion -gt $CurrentVersion)) {
+                  $_ -replace $OPAVerRegex, "'$LatestOPAVersion'"
+                  $Replace = $true
+              }
+              elseif ($EndAcceptableVarMatch -and $Replace) {
+                  $VersionsLength = ($_ -split ",").length
+
+                  # Split the line if we reach our version limit per line
+                  # in the the file. This is to prevent long lines.
+                  if ($VersionsLength -gt $MAXIMUM_VER_PER_LINE) {
+                      $VersionsArr = $_ -split "#"
+
+                      # Create a new line
+                      # Then add the new version on the next line
+                      ($VersionsArr[$VersionsArr.length - 2]).TrimEnd()
+                      "    '$LatestOPAVersion' $END_VERSIONS_COMMENT" # 4 space indentation
+                  }
+                  else {
+                      $VersionsArr = $_ -split "#"
+                      $NewVersions = $VersionsArr[0..($VersionsArr.Length-2)] -join ","
+                      $NewVersions + "'$LatestOPAVersion' $END_VERSIONS_COMMENT"
+                  }
+              }
+              else {
+                  $_
+              }
+          } | Set-Content $OPAVersionPath   
       - name: Create the OPA update PR
         run: |
           Write-Host "FAIL FIRST STEP"
