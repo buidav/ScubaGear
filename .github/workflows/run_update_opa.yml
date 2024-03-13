@@ -26,8 +26,8 @@ jobs:
           git config credential.helper
           WRITE-HOST $OPAVersionBumpBranch
           WRITE-HOST I GET HERE
-          $OPABranchExists = $false
-          # $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
+          # $OPABranchExists = $false
+          $OPABranchExists = git ls-remote --heads --exit-code origin $($OPAVersionBumpBranch)
           WRITE-HOST fail here somewhere
           Write-Host $OPABranchExists
           # if ($OPABranchExists) {
