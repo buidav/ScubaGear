@@ -33,19 +33,4 @@ jobs:
               exit 0 
           }
           WRITE-HOST fail before vars
-          echo latestoparelease=$LatestOPARelease >> $env:GITHUB_OUTPUT
-          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
           WRITE-HOST FAIL AFTER VARS
-      - name: Create the OPA update PR
-        run: |
-          Write-Host "FAIL FIRST STEP"
-          $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
-          $OPABranchExists = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git checkout -b $OPAVersionBumpBranch
-          git add .
-          git commit -m "Update OPA version to $LatestOPARelease"
-          git push origin $OPAVersionBumpBranch
-          gh pr create -B main -H $OPAVersionBumpBranch --title 'Bump OPA version to $LatestOPARelease' --body 'Created by Github action'
-          
