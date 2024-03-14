@@ -25,10 +25,7 @@ jobs:
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           $OPABranchExists = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
-          if ($LASTEXITCODE -eq 0) { $UpdateRequired = $true } 
-          echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
-          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
-          echo updaterequired=$UpdateRequired >> $env:GITHUB_OUTPUT
+          if (-not $OPABranchExists) { $UpdateRequired = $true } 
 
           if ($UpdateRequired) {
             Write-Output "Update Required: Latest OPA version is $($LatestOPAVersion)"
@@ -36,6 +33,11 @@ jobs:
           else {
             Write-Output "Update is not required: Latest OPA version is $($LatestOPAVersion)"
           }
+
+          echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
+          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
+          echo updaterequired=$UpdateRequired >> $env:GITHUB_OUTPUT
+          
           # Note in this git-ls will always fail with exit code 1 when the branch does not exist. 
           # We will thus always exit 0 (success) at the end
           exit 0
