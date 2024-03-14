@@ -25,7 +25,7 @@ jobs:
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           $OPABranchExists = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
-          if (-not $OPABranchExists) { $UpdateRequired = $true } 
+          if ($LASTEXITCODE -eq 0) { $UpdateRequired = $true } 
 
           if ($UpdateRequired) {
             Write-Output "Update Required: Latest OPA version is $($LatestOPAVersion)"
