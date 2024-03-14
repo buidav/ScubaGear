@@ -21,57 +21,78 @@ jobs:
         shell: powershell
         run: |
           $UpdateRequired = $false
-
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
-          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          $OPABranchExists = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
-          if ($LASTEXITCODE -eq 0) { $UpdateRequired = $true } 
-
-          if ($UpdateRequired) {
-            Write-Output "Update Required: Latest OPA version is $($LatestOPAVersion)"
-          }
-          else {
-            Write-Output "Update is not required: Latest OPA version is $($LatestOPAVersion)"
-          }
-
-          echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
-          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
-          echo updaterequired=$UpdateRequired >> $env:GITHUB_OUTPUT
+          $LatestOPAVersion = $LatestOPAVersion -replace "v", v
           
-          # Note in this git-ls will always fail with exit code 1 when the branch does not exist. 
-          # We will thus always exit 0 (success) at the end
-          exit 0
-      - name: Update OPA version in ScubaGear
-        if: steps.determine-update-required.outputs.updaterequired == 'true'
-        run: |
-          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          # Check if there is already an update branch
+          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
+          git ls-remote --exit-code --heads origin $OPAVersionBumpBranch | Out-Null
+          if ($LASTEXITCODE -eq 0) { 
+            $UpdateRequired = $true 
+          } 
+
+          # Check if our current OPA version is outdated
           $OPAVersionPath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
           $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
           $ExpectedVersionPattern = "ExpectedVersion = $OPAVer"
-          
           $SupportModule = Get-Content $OPAVersionPath -Raw
           
           # Find our current OPA version using some dirty string
           # manipulation
-          $CurrentVersion = '0.0.0'
+          $CurrentOPAVersion = '0.0.0'
           if ($SupportModule -match $ExpectedVersionPattern) {
-              $CurrentVersion = ($Matches[0] -split "=")[1] -replace " ", ""
-              $CurrentVersion = $CurrentVersion -replace "'", ""
+              $CurrentOPAVersion = ($Matches[0] -split "=")[1] -replace " ", ""
+              $CurrentOPAVersion = $CurrentOPAVersion -replace "'", ""
           }
 
-          $MAXIMUM_VER_PER_LINE = 8 # Handle long lines of acceptable versions
+          if ($LatestOPAVersion -gt $CurrentOPAVersion) {
+            $UpdateRequired = $true
+          }
+
+
+          if ($UpdateRequired) {
+            Write-Output "OPA version update required."
+          }
+          else {
+            Write-Output "OPA version update is not required. Update branch already exists or OPA version already up to date.
+          }
+          Write-Output "Current ScubaGear default OPA Version: v$($CurrentOPAVersion) Latest OPA version: v$($LatestOPAVersion)"
+
+          echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
+          echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
+          echo updaterequired=$UpdateRequired >> $env:GITHUB_OUTPUT
+          echo currentopaversion=$CurrentOPAVersion >> $env:GITHUB_OUTPUT
+          
+          # Note that git-ls will always fail with exit code 1 when the branch does not exist. 
+          # Setting exit 0 (success) at the end of this workflow to prevent that error
+          exit 0
+      - name: Update OPA version in ScubaGear
+        id: update-opa-version
+        if: steps.determine-update-required.outputs.updaterequired == 'true'
+        run: |
+          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
+
+          $MAXIMUM_VER_PER_LINE = 8 # Max versions allowed in one line of acceptable versions
           $END_VERSIONS_COMMENT = "# End Versions" # EOL comment in the PowerShell file
+          
+          $OPAVersionPath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
+          $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
+          $ExpectedVersionPattern = "ExpectedVersion = $OPAVer"
           $EndAcceptableVerRegex = ".*$END_VERSIONS_COMMENT"
           $Replace = $false # replace the current version or not
 
           (Get-Content -Path $OPAVersionPath) | ForEach-Object {
               $ExpectedVerMatch = $_ -match "ExpectedVersion = "
               $EndAcceptableVarMatch = $_ -match $EndAcceptableVerRegex
-              if ($ExpectedVerMatch -and ($LatestOPAVersion -gt $CurrentVersion)) {
+              
+              # Match on and replace default value of the "ExpectedVersion" parameter
+              if ($ExpectedVerMatch -and ($LatestOPAVersion -gt $CurrentOPAVersion)) {
                   $_ -replace $OPAVerRegex, "'$LatestOPAVersion'"
                   $Replace = $true
               }
               elseif ($EndAcceptableVarMatch -and $Replace) {
+                  # match on "AcceptableVersion" variable
                   $VersionsLength = ($_ -split ",").length
 
                   # Split the line if we reach our version limit per line
@@ -97,13 +118,13 @@ jobs:
       - name: Create the OPA update PR
         if: steps.determine-update-required.outputs.updaterequired == 'true'
         run: |
-          Write-Host "FAIL FIRST STEP"
-          $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
+          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
           $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b $OPAVersionBumpBranch
           git add .
-          git commit -m "Update OPA version to $LatestOPARelease"
+          git commit -m "Update OPA version from v$CurrentOPAVersion to  v$LatestOPARelease"
           git push origin $OPAVersionBumpBranch
           gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $LatestOPARelease" --body 'Created by Github action'
