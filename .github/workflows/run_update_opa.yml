@@ -20,16 +20,87 @@ jobs:
         continue-on-error: true
         shell: powershell
         run: |
-          Write-Host TESTME
+          $UpdateRequired = $false
+
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           $OPABranchExists = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
-          if ($LASTEXITCODE -eq 0) {
-            $OPABranchExists = $true
-          } else {
-            $OPABranchExists = $false
+          if ($OPABranchExists) {
+            $UpdateRequired = $true
+          } 
+          else {
+            $UpdateRequired = $false
           }
           echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
-          Write-Output "Note this step will always fail with exit code 1 when the branch does not exist. Ignore the error because that is what we want"
+          echo "::set-output name=updaterequired::$UpdateRequired"
+          
+          # Note in this git-ls will always fail with exit code 1 when the branch does not exist. 
+          # We will thus always exit 0 (success) at the end
           exit 0
+      - name: Update OPA version in ScubaGear
+        if: steps.determine-update-required.outputs.updaterequired == 'true'
+        run: |
+          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          $OPAVersionPath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
+          $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
+          $ExpectedVersionPattern = "ExpectedVersion = $OPAVer"
+          
+          $SupportModule = Get-Content $OPAVersionPath -Raw
+          
+          # Find our current OPA version using some dirty string
+          # manipulation
+          $CurrentVersion = '0.0.0'
+          if ($SupportModule -match $ExpectedVersionPattern) {
+              $CurrentVersion = ($Matches[0] -split "=")[1] -replace " ", ""
+              $CurrentVersion = $CurrentVersion -replace "'", ""
+          }
+
+          $MAXIMUM_VER_PER_LINE = 8 # Handle long lines of acceptable versions
+          $END_VERSIONS_COMMENT = "# End Versions" # EOL comment in the PowerShell file
+          $EndAcceptableVerRegex = ".*$END_VERSIONS_COMMENT"
+          $Replace = $false # replace the current version or not
+
+          (Get-Content -Path $OPAVersionPath) | ForEach-Object {
+              $ExpectedVerMatch = $_ -match "ExpectedVersion = "
+              $EndAcceptableVarMatch = $_ -match $EndAcceptableVerRegex
+              if ($ExpectedVerMatch -and ($LatestOPAVersion -gt $CurrentVersion)) {
+                  $_ -replace $OPAVerRegex, "'$LatestOPAVersion'"
+                  $Replace = $true
+              }
+              elseif ($EndAcceptableVarMatch -and $Replace) {
+                  $VersionsLength = ($_ -split ",").length
+
+                  # Split the line if we reach our version limit per line
+                  # in the the file. This is to prevent long lines.
+                  if ($VersionsLength -gt $MAXIMUM_VER_PER_LINE) {
+                      $VersionsArr = $_ -split "#"
+
+                      # Create a new line
+                      # Then add the new version on the next line
+                      ($VersionsArr[$VersionsArr.length - 2]).TrimEnd()
+                      "    '$LatestOPAVersion' $END_VERSIONS_COMMENT" # 4 space indentation
+                  }
+                  else {
+                      $VersionsArr = $_ -split "#"
+                      $NewVersions = $VersionsArr[0..($VersionsArr.Length-2)] -join ","
+                      $NewVersions + "'$LatestOPAVersion' $END_VERSIONS_COMMENT"
+                  }
+              }
+              else {
+                  $_
+              }
+          } | Set-Content $OPAVersionPath               
+      - name: Create the OPA update PR
+        if: steps.determine-update-required.outputs.updaterequired == 'true'
+        run: |
+          Write-Host "FAIL FIRST STEP"
+          $LatestOPARelease = "${{ steps.determine-update-required.outputs.latestoparelease }}"
+          $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git checkout -b $OPAVersionBumpBranch
+          git add .
+          git commit -m "Update OPA version to $LatestOPARelease"
+          git push origin $OPAVersionBumpBranch
+          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $LatestOPARelease" --body 'Created by Github action'
