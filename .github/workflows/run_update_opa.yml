@@ -124,6 +124,10 @@ jobs:
           $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
           $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
           $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
+          Write-Output a
+          Write-Output $LatestOPAVersion
+          Write-Output $OPAVersionBumpBranch
+          Write-Output $CurrentOPAVersion
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b "$OPAVersionBumpBranch"
