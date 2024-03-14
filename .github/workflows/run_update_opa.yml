@@ -167,5 +167,4 @@ jobs:
           git add .
           git commit -m "Update OPA version from v$($CurrentOPAVersion) to  v$($LatestOPAVersion)"
           git push origin $OPAVersionBumpBranch
-          gh auth refresh -s project
-          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version from v$($CurrentOPAVersion) to v$($LatestOPAVersion)" --body "${$PRTemplateContent}" --label "version bump" --project "ScubaGear M365"
+          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version from v$($CurrentOPAVersion) to v$($LatestOPAVersion)" --body "${$PRTemplateContent}" --label "version bump"
