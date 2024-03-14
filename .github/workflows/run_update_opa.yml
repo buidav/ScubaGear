@@ -27,10 +27,10 @@ jobs:
           # Check if there is already an update branch
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
-          $OPAVersionBranchDNE = $false
+          $OPAVersionBranchExists = $false
           if ($LASTEXITCODE -eq 0) { 
-            $OPAVersionBranchDNE = $true 
-            Write-Host $OPAVersionBranchDNE
+            $OPAVersionBranchExists = $true 
+            Write-Host $OPAVersionBranchExists
           } 
 
           # Check if our current OPA version is outdated
@@ -47,7 +47,7 @@ jobs:
               $CurrentOPAVersion = $CurrentOPAVersion -replace "'", ""
           }
 
-          if (($LatestOPAVersion -gt $CurrentOPAVersion) -and $OPAVersionBranchDNE) {
+          if (($LatestOPAVersion -gt $CurrentOPAVersion) -and (-not $OPAVersionBranchExists)) {
             $UpdateRequired = $true
           }
 
