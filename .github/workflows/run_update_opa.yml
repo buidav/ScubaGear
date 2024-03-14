@@ -85,7 +85,7 @@ jobs:
           $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
           $DefaultVersionPattern = "DefaultOPAVersion = $OPAVerRegex"
           $ScubaConfigModule = Get-Content $ScubaConfigPath -Raw
-          $Content = $ScubaConfigModule -replace $DefaultVersionPattern, "DefaultOPAVersion = '$'"
+          $Content = $ScubaConfigModule -replace $DefaultVersionPattern, "DefaultOPAVersion = '$CurrentOPAVersion'"
           Set-Content -Path $ScubaConfigPath -Value $Content
 
           # Update Acceptable Versions in Support Module
