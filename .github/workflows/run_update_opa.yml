@@ -45,6 +45,7 @@ jobs:
               Write-Host "Do I even get here"
               $CurrentOPAVersion = ($Matches[0] -split "=")[1] -replace " ", ""
               $CurrentOPAVersion = $CurrentOPAVersion -replace "'", ""
+              Write-Host $CurrentOPAVersion
           }
           Write-Host $CurrentOPAVersion
 
