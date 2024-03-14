@@ -1,7 +1,7 @@
 $LatestOPAVersion = '0.62.1'
 $OPAVersionPath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
 $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
-$ExpectedVersionPattern = "ExpectedVersion = $OPAVer"
+$ExpectedVersionPattern = "ExpectedVersion = $OPAVerRegex"
 
 $SupportModule = Get-Content $OPAVersionPath -Raw
 
