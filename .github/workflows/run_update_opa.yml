@@ -22,7 +22,7 @@ jobs:
         run: |
           $UpdateRequired = $false
           $LatestOPAVersion = Invoke-RestMethod -Uri "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | Select-Object -ExpandProperty tag_name
-          $LatestOPAVersion = $LatestOPAVersion -replace "v", v
+          $LatestOPAVersion = $LatestOPAVersion -replace "v", ""
           
           # Check if there is already an update branch
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
