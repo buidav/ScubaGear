@@ -26,7 +26,7 @@ jobs:
           
           # Check if there is already an update branch
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
-          git ls-remote --exit-code --heads origin $OPAVersionBumpBranch | Out-Null
+          $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
           $OPAVersionBranchDNE = $false
           if ($LASTEXITCODE -eq 0) { 
             $OPAVersionBranchDNE = $true 
