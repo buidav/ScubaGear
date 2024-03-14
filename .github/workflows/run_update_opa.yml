@@ -122,6 +122,12 @@ jobs:
               }
           } | Set-Content $SupportModulePath
 
+          #
+          # Version in README
+          #
+
+          # OPA version (Currently v0.61.0)
+
       - name: Create the OPA update PR
         if: steps.determine-update-required.outputs.updaterequired == 'true'
         run: |
