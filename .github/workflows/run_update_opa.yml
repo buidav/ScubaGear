@@ -44,6 +44,7 @@ jobs:
           if ($SupportModule -match $ExpectedVersionPattern) {
               Write-Host "Do I even get here"
               $CurrentOPAVersion = ($Matches[0] -split "=")[1] -replace " ", ""
+              Write-Host $CurrentOPAVersion
               $CurrentOPAVersion = $CurrentOPAVersion -replace "'", ""
               Write-Host $CurrentOPAVersion
           }
