@@ -117,12 +117,17 @@ jobs:
               else {
                   $_
               }
-          } | Set-Content $OPAVersionPath
-      - name: Create PR Body Content
-        id: create-pr-body
+          } | Set-Content $OPAVersionPath        
+      - name: Create the OPA update PR
         if: steps.determine-update-required.outputs.updaterequired == 'true'
         run: |
           $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
+          $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
+          $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
+          
+          #
+          # Create the PR Body
+          #
           $PRTemplatePath = '.\.github\pull_request_template.md'
 
           $Description = '<!-- Describe the "what" of your changes in detail. -->'
@@ -156,18 +161,11 @@ jobs:
                   $_ + "`n"
                 }
           }
-          echo prtemplatecontent=$PRTemplateContent >> $env:GITHUB_OUTPUT           
-      - name: Create the OPA update PR
-        if: steps.determine-update-required.outputs.updaterequired == 'true'
-        run: |
-          $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
-          $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
-          $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
-          $PRBody = "${{ steps.create-pr-body.outputs.prtemplatecontent }}
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git checkout -b "$($OPAVersionBumpBranch)"
           git add .
           git commit -m "Update OPA version from v$($CurrentOPAVersion) to  v$($LatestOPAVersion)"
           git push origin $OPAVersionBumpBranch
-          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version from v$($CurrentOPAVersion) to v$($LatestOPAVersion)" --body "${PRBody}" --label "version bump"
+          gh auth refresh -s project
+          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version from v$($CurrentOPAVersion) to v$($LatestOPAVersion)" --body "${$PRTemplateContent}" --label "version bump" --project "ScubaGear M365"
