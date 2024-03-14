@@ -42,13 +42,9 @@ jobs:
           # manipulation
           $CurrentOPAVersion = '0.0.0'
           if ($SupportModule -match $ExpectedVersionPattern) {
-              Write-Host "Do I even get here"
               $CurrentOPAVersion = ($Matches[0] -split "=")[1] -replace " ", ""
-              Write-Host $CurrentOPAVersion
               $CurrentOPAVersion = $CurrentOPAVersion -replace "'", ""
-              Write-Host $CurrentOPAVersion
           }
-          Write-Host $CurrentOPAVersion
 
           if (($LatestOPAVersion -gt $CurrentOPAVersion) -and $OPAVersionBranchDNE) {
             $UpdateRequired = $true
@@ -130,6 +126,6 @@ jobs:
           git config --global user.name "GitHub Action"
           git checkout -b "$OPAVersionBumpBranch"
           git add .
-          git commit -m "Update OPA version from v$($CurrentOPAVersion) to  v$($LatestOPARelease)"
+          git commit -m "Update OPA version from v$(CurrentOPAVersion) to  v$(LatestOPARelease)"
           git push origin $OPAVersionBumpBranch
-          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $LatestOPARelease" --body 'Created by Github action'
+          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $(LatestOPARelease)" --body 'Created by Github action'
