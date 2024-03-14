@@ -28,6 +28,7 @@ jobs:
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
           $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
           $OPAVersionBranchExists = $false
+          Write-Host "why does my last exit code fail"
           if ($LASTEXITCODE -eq 0) { 
             $OPAVersionBranchExists = $true 
             Write-Host $OPAVersionBranchExists
