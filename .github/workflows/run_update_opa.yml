@@ -30,6 +30,7 @@ jobs:
           $OPAVersionBranchDNE = $false
           if ($LASTEXITCODE -eq 0) { 
             $OPAVersionBranchDNE = $true 
+            Write-Host $OPAVersionBranchDNE
           } 
 
           # Check if our current OPA version is outdated
