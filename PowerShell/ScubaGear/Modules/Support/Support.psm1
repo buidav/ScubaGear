@@ -73,7 +73,7 @@ function Initialize-SCuBA {
         [Parameter(Mandatory = $false, HelpMessage = 'The version of OPA Rego to be downloaded, must be in "x.x.x" format')]
         [Alias('version')]
         [string]
-        $ExpectedVersion = '0.59.0',
+        $ExpectedVersion = 'v0.62.1',
 
         [Parameter(Mandatory = $false, HelpMessage = 'The operating system the program is running on')]
         [ValidateSet('Windows','MacOS','Linux')]
@@ -209,7 +209,7 @@ function Install-OPA {
         [Parameter(Mandatory = $false, HelpMessage = 'The version of OPA Rego to be downloaded, must be in "x.x.x" format')]
         [Alias('version')]
         [string]
-        $ExpectedVersion = '0.59.0',
+        $ExpectedVersion = 'v0.62.1',
 
         [Parameter(Mandatory = $false, HelpMessage = 'The file name that the opa executable is to be saved as')]
         [Alias('name')]
@@ -231,7 +231,8 @@ function Install-OPA {
     # Constants
     # The "End Versions" comment is important to the OPA version bump workflow
     $ACCEPTABLEVERSIONS = '0.42.1','0.42.2','0.43.1','0.44.0','0.45.0','0.46.3','0.47.4','0.48.0','0.49.2','0.50.2',
-    '0.51.0','0.52.0','0.53.1','0.54.0','0.55.0','0.56.0','0.57.1','0.58.0','0.59.0' # End Versions
+    '0.51.0','0.52.0','0.53.1','0.54.0','0.55.0','0.56.0','0.57.1','0.58.0','0.59.0'
+    'v0.62.1' # End Versions
     $FILENAME = @{ Windows = "opa_windows_amd64.exe"; MacOS = "opa_darwin_amd64"; Linux = "opa_linux_amd64_static"}
 
     # Set prefernces for writing messages
