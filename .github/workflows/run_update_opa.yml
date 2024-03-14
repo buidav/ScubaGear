@@ -25,7 +25,7 @@ jobs:
           $LatestOPAVersion = $LatestOPAVersion -replace "v", ""
           
           # Check if there is already an update branch
-          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPARelease)"     
+          $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPAVersion)"     
           $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
           $OPAVersionBranchExists = $false
           Write-Host "why does my last exit code fail"
@@ -124,14 +124,10 @@ jobs:
           $LatestOPAVersion = "${{ steps.determine-update-required.outputs.latestopaversion }}"
           $CurrentOPAVersion = "${{ steps.determine-update-required.outputs.currentopaversion }}"
           $OPAVersionBumpBranch = "${{ steps.determine-update-required.outputs.opaversionbumpbranch }}" 
-          Write-Output a
-          Write-Output $LatestOPAVersion
-          Write-Output $OPAVersionBumpBranch
-          Write-Output $CurrentOPAVersion
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git checkout -b "$OPAVersionBumpBranch"
+          git checkout -b "$($OPAVersionBumpBranch)"
           git add .
-          git commit -m "Update OPA version from v$($CurrentOPAVersion) to  v$($LatestOPARelease)"
+          git commit -m "Update OPA version from v$($CurrentOPAVersion) to  v$($LatestOPAVersion)"
           git push origin $OPAVersionBumpBranch
-          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $($LatestOPARelease)" --body 'Created by Github action'
+          gh pr create -B main -H $OPAVersionBumpBranch --title "Bump OPA version to $($LatestOPAVersion)" --body 'Created by Github action'
