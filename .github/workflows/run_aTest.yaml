@@ -14,7 +14,7 @@ jobs:
         continue-on-error: true
         run: |
           $repoUrl = git remote get-url origin
-          $branchExists = git ls-remote --exit-code --heads $repoUrl dev
+          $branchExists = git ls-remote --exit-code --heads origin dev
           if ($LASTEXITCODE -eq 0) {
             Write-Output "Branch exists"
           } else {
