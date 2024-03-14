@@ -86,7 +86,7 @@ jobs:
           $DefaultVersionPattern = "DefaultOPAVersion = $OPAVerRegex"
           $ScubaConfigModule = Get-Content $ScubaConfigPath -Raw
           $Content = $ScubaConfigModule -replace $DefaultVersionPattern, "DefaultOPAVersion = '$LatestOPAVersion'"
-          Set-Content -Path $ScubaConfigPath -Value $Content
+          Set-Content -Path $ScubaConfigPath -Value $Content -NoNewline
 
           # Update Acceptable Versions in Support Module
           $SupportModulePath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
