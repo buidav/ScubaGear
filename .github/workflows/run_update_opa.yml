@@ -1,7 +1,9 @@
 name: Update OPA executable version if necessary
 
+# Run this workflow M-F at 2:11 a.m UTC 10:11 p.m Eastern Daylight Time
 on:
   schedule:
+    #- cron: "11 2 * * 1-5"
     - cron: "*/5 * * * *"
   workflow_dispatch:
 
@@ -136,7 +138,7 @@ jobs:
           Set-Content -Path $READMEPath -Value $Content
           if ($READMEContent -match $LatestOPAVerRegex) {
               Write-Output "OPA versioning found in the README. Replacing"
-              $NewContent = $READMEContent -replace $LatestOPAVerRegex, "2. Look for the latest OPA version (Currently v$LatestOPAVersion) "
+              $NewContent = $READMEContent -replace $LatestOPAVerRegex, "2. Look for the latest OPA version (Currently v$LatestOPAVersion)"
               Set-Content -Path $READMEPath -Value $NewContent -NoNewline
           }
           else {
