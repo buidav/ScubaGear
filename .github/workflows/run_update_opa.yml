@@ -1,9 +1,8 @@
-name: Update OPA executable version if applicable
+name: Update OPA executable version if necessary
 
 on:
   schedule:
     - cron: "1 * * * *"
-  workflow_dispatch:
 
 jobs:
   update-opa-dependency:
