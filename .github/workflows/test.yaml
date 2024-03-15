@@ -3,7 +3,6 @@ name: This is a test job
 on:
   schedule:
     - cron: "*/1 * * * *"
-  workflow_dispatch:
 
 jobs:
   update-opa-dependency:
