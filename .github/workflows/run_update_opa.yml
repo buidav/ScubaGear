@@ -1,4 +1,4 @@
-name: 0Update OPA executable version
+name: Update OPA executable version if applicable
 
 on:
   workflow_dispatch:
@@ -14,7 +14,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Determine if OPA update is required
         id: determine-update-required
         continue-on-error: true
@@ -28,10 +27,8 @@ jobs:
           $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPAVersion)"     
           $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
           $OPAVersionBranchExists = $false
-          Write-Host "why does my last exit code fail"
           if ($LASTEXITCODE -eq 0) { 
             $OPAVersionBranchExists = $true 
-            Write-Host $OPAVersionBranchExists
           } 
 
           # Check if our current OPA version is outdated
@@ -65,6 +62,7 @@ jobs:
           }
           Write-Output "Current ScubaGear default OPA Version: v$($CurrentOPAVersion) Latest OPA version: v$($LatestOPAVersion)"
 
+          # pass variables to the next steps
           echo latestopaversion=$LatestOPAVersion >> $env:GITHUB_OUTPUT
           echo opaversionbumpbranch=$OPAVersionBumpBranch >> $env:GITHUB_OUTPUT
           echo updaterequired=$UpdateRequired >> $env:GITHUB_OUTPUT
