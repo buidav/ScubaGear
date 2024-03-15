@@ -85,8 +85,13 @@ jobs:
           $OPAVerRegex = "\'\d+\.\d+\.\d+\'"
           $DefaultVersionPattern = "DefaultOPAVersion = $OPAVerRegex"
           $ScubaConfigModule = Get-Content $ScubaConfigPath -Raw
-          $Content = $ScubaConfigModule -replace $DefaultVersionPattern, "DefaultOPAVersion = '$LatestOPAVersion'"
-          Set-Content -Path $ScubaConfigPath -Value $Content -NoNewline
+          if ($ScubaConfigModule -match $DefaultVersionPattern) {
+            $Content = $ScubaConfigModule -replace $DefaultVersionPattern, "DefaultOPAVersion = '$LatestOPAVersion'"
+            Set-Content -Path $ScubaConfigPath -Value $Content -NoNewline
+          }
+          else {
+            throw "Fatal Error: Couldn't find the default OPA version in the ScubaConfig."
+          }
 
           # Update Acceptable Versions in Support Module
           $SupportModulePath = '.\PowerShell\ScubaGear\Modules\Support\Support.psm1'
@@ -103,7 +108,7 @@ jobs:
                   # Split the line if we reach our version limit per line
                   # in the the file. This is to prevent long lines.
                   if ($VersionsLength -gt $MAXIMUM_VER_PER_LINE) {
-                      Write-Host "split"
+                      Write-Output "Splitting lines; Current and latest OPA Version will start on the next line"
                       $VersionsArr = $_ -split ","
                       # Create a new line
                       # Then add the new version on the next line
@@ -111,7 +116,7 @@ jobs:
                       "    '$CurrentOPAVersion', $DefaultOPAVersionVar $END_VERSIONS_COMMENT" # 4 space indentation
                   }
                   else {
-                      Write-Host "nosplit"
+                      Write-Output "No Splitting lines; Appending new Current OPA version to acceptable version"
                       $VersionsArr = $_ -split ","
                       $NewVersions = ($VersionsArr[0..($VersionsArr.Length-2)] -join ",")
                       $NewVersions + ", '$CurrentOPAVersion'" + ", $DefaultOPAVersionVar $END_VERSIONS_COMMENT"
@@ -126,16 +131,17 @@ jobs:
           # Replace latest supported OPA version in the README
           #
           $READMEPath = '.\README.md'
-          $OPARegex = "# OPA version (Currently v\d+\.\d+\.\d+) "
-          (Get-Content -Path $READMEPath) | ForEach-Object {
-            $OPARegex = $_ -match $OPARegex
-            if ($BadgeVerMatch) {
-              $_ -replace $BadgeRegex, ""# OPA version (Currently v$LatestOPAVersion) ""
-            } 
-            else {
-              $_
-            }
-          } | Set-Content -Path $READMEPath
+          $LatestOPAVerRegex = ".*OPA version \(Currently v\d+\.\d+\.\d+\)"
+          $READMEContent = Get-Content -Path $READMEPath -Raw
+          Set-Content -Path $READMEPath -Value $Content
+          if ($READMEContent -match $LatestOPAVerRegex) {
+              Write-Output "OPA versioning found in the README. Replacing"
+              $NewContent = $READMEContent -replace $LatestOPAVerRegex, "OPA version (Currently v$LatestOPAVersion) "
+              Set-Content -Path $READMEPath -Value $NewContent -NoNewline
+          }
+          else {
+            Write-Output "No OPA versioning was found in the README. Check to see if something changed."
+          }
       - name: Create the OPA update PR
         if: steps.determine-update-required.outputs.updaterequired == 'true'
         run: |
