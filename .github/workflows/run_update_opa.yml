@@ -108,7 +108,7 @@ jobs:
                   # Split the line if we reach our version limit per line
                   # in the the file. This is to prevent long lines.
                   if ($VersionsLength -gt $MAXIMUM_VER_PER_LINE) {
-                      Write-Output "Splitting lines; Current and latest OPA Version will start on the next line"
+                      # Splitting lines; Current and latest OPA Version will start on the next line
                       $VersionsArr = $_ -split ","
                       # Create a new line
                       # Then add the new version on the next line
@@ -116,7 +116,7 @@ jobs:
                       "    '$CurrentOPAVersion', $DefaultOPAVersionVar $END_VERSIONS_COMMENT" # 4 space indentation
                   }
                   else {
-                      Write-Output "No Splitting lines; Appending new Current OPA version to acceptable version"
+                      # No Splitting lines; Appending new Current OPA version to acceptable version
                       $VersionsArr = $_ -split ","
                       $NewVersions = ($VersionsArr[0..($VersionsArr.Length-2)] -join ",")
                       $NewVersions + ", '$CurrentOPAVersion'" + ", $DefaultOPAVersionVar $END_VERSIONS_COMMENT"
@@ -136,7 +136,7 @@ jobs:
           Set-Content -Path $READMEPath -Value $Content
           if ($READMEContent -match $LatestOPAVerRegex) {
               Write-Output "OPA versioning found in the README. Replacing"
-              $NewContent = $READMEContent -replace $LatestOPAVerRegex, "OPA version (Currently v$LatestOPAVersion) "
+              $NewContent = $READMEContent -replace $LatestOPAVerRegex, "2. Look for the latest OPA version (Currently v$LatestOPAVersion) "
               Set-Content -Path $READMEPath -Value $NewContent -NoNewline
           }
           else {
