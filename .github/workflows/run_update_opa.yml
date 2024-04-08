@@ -3,8 +3,8 @@ name: Update OPA executable version if necessary
 # Run this workflow M-F at 2:11 a.m UTC 10:11 p.m Eastern Daylight Time
 on:
   schedule:
-    #- cron: "11 2 * * 1-5"
-    - cron: "*/5 * * * *"
+    - cron: "11 2 * * 1-5"
+    #- cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
