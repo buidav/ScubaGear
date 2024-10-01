@@ -236,7 +236,7 @@ function Install-OPA {
     )
 
     # Constants
-    $ACCEPTABLEVERSIONS = [ScubaConfig]::ScubaDefault('DefaultOPAVersion') # End Versions
+    $ACCEPTABLEVERSIONS = [ScubaConfig]::ScubaDefault('DefaultOPAVersion') # End Versions,    $ACCEPTABLEVERSIONS = [ScubaConfig]::ScubaDefault('DefaultOPAVersion') # End Versions, '0.64.1', [ScubaConfig]::ScubaDefault('DefaultOPAVersion') # End Versions
     $FILENAME = @{ Windows = "opa_windows_amd64.exe"; MacOS = "opa_darwin_amd64"; Linux = "opa_linux_amd64_static"}
 
     # Set prefernces for writing messages
