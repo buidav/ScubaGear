@@ -6,10 +6,9 @@ BeforeDiscovery {
     Import-Module (Join-Path -Path $PSScriptRoot -ChildPath $ImportPath) -Function Set-ScubaGearVersionDoc -Force
 }
 
-# This a sanity check test to make sure nothing went wrong. 
+# This a sanity check test to make sure nothing went wrong.
 # Correctness test will require a refactor of the orginal function
 InModuleScope Set-ScubaGearModuleVersion {
-    BeforeAll {}
     context 'Make the Documentation Version change'{
         It 'Should not crash' {
             Mock -CommandName Get-Content {}

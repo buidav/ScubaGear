@@ -117,11 +117,11 @@ function Set-ScubaGearModuleVersion {
     # Replace the module version in the documentation
     Set-ScubaGearVersionDoc
 
-    # Create the GitHub Pull Request 
+    # Create the GitHub Pull Request
     $PRTemplateContent = New-PRBody
 
-    # Create the PR 
-    # We abstract this out into a reusable function in the future.
+    # Create the PR
+    # TODO abstract this out into a reusable function in the future.
     $ScubaGearVersionBumpBranch = "scubagear-version-bump-${env:NEW_VERSION_NUMBER}"
     git config --global user.email "action@github.com"
     git config --global user.name "GitHub Action"
