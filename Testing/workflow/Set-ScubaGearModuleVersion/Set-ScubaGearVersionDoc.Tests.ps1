@@ -1,15 +1,27 @@
-[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-param()
-
 BeforeDiscovery {
     $ImportPath = "../../../utils/workflow/Set-ScubaGearModuleVersion.psm1"
     Import-Module (Join-Path -Path $PSScriptRoot -ChildPath $ImportPath) -Function Set-ScubaGearVersionDoc -Force
 }
 
-# This a sanity check test to make sure nothing went wrong.
-# Correctness test will require a refactor of the orginal function
-InModuleScope Set-ScubaGearModuleVersion {
-    context 'Make the Documentation Version change'{
+Describe "Check installation via GitHub documentation location" {
+    It "Should exist" {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'DocPath')]
+        $DocPath = Join-Path -Path $PSScriptRoot -ChildPath "../../../docs/installation/github.md"
+        {Test-Path $DocPath} | Should -Be $true
+    }
+}
+
+Describe "Check installation via PSGallery documentation location" {
+    It "Should exist" {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'DocPath')]
+        $DocPath = Join-Path -Path $PSScriptRoot -ChildPath "../../../docs/installation/psgallery.md"
+        {Test-Path $DocPath} | Should -Be $true
+    }
+}
+
+# Sanity check test
+Describe "Make ScubaGear Module version change" {
+    InModuleScope Set-ScubaGearModuleVersion {
         It 'Should not crash' {
             Mock -CommandName Get-Content {}
             Mock -CommandName ForEach-Object {}
@@ -18,7 +30,6 @@ InModuleScope Set-ScubaGearModuleVersion {
         }
     }
 }
-
 
 AfterAll {
     Remove-Module Set-ScubaGearModuleVersion -ErrorAction SilentlyContinue
