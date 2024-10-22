@@ -62,9 +62,8 @@ function Set-ScubaGearVersionDoc {
 function New-PRBody {
     <#
     .Description
-    Replace ScubaGear module version in
-    ./docs/installation/github
-    ./docs/installation/psgallery
+    Create the Pull Request Body
+    From the ScubaGear PR template
     .Functionality
     Internal
     #>
