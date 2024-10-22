@@ -10,6 +10,7 @@ Describe "Check PR template location" {
         {Test-Path $TemplatePath} | Should -Be $true
     }
 }
+
 # Sanity check test
 Describe "Create the Pull Request Body" {
     InModuleScope Set-ScubaGearModuleVersion {
