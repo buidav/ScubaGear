@@ -146,7 +146,7 @@ function Test-ScubaGearVersionWorkflowInput {
 
     # check if version bump label exists
     $LabelName = "version bump"
-    $Repo = $env:REPO # This environment variable was set from the workflow
+    $Repo = "$env:REPO" # This environment variable was set from the workflow
 
     Write-Output "$($Repo)"
     # Check if the label exists otherwise create it
