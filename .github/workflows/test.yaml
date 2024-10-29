@@ -1,0 +1,19 @@
+name: Check Label Existence
+
+on:
+    workflow_dispatch:
+
+jobs:
+  check-label:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Repository Variables
+        shell: pwsh
+        run: |
+          # Set the repository owner and name as environment variables
+          $env:REPO = "${{ github.repository }}"
+          Write-Output $env:REPO
