@@ -123,7 +123,7 @@ function Test-ScubaGearVersionWorkflowInput {
         Write-Output "Invalid Semantic Version: $($env:NEW_VERSION_NUMBER) does not conform to SemVer standards."
         exit 1
     }
-    Write-Output "Finished Version Validation"
+    Write-Output "Past Version Validation"
 
     #
     # delete the branch if it already exists
@@ -142,24 +142,25 @@ function Test-ScubaGearVersionWorkflowInput {
         git push origin --delete $ScubaGearVersionBumpBranch
         Write-Output "Branch '$ScubaGearVersionBumpBranch' deleted."
     }
-
-    Write-Output "Deleted branch"
+    Write-Output "Past Brach Existance Check"
 
     # check if version bump label exists
     $LabelName = "version bump"
     $Repo = $env:REPO # This environment variable was set from the workflow
 
+    Write-Output $Repo
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
+    Write-Output Labels
     $LabelExists = $Labels | Where-Object { $_.name -eq $LabelName }
 
     if (-not $LabelExists) {
         $LabelColor = "d4c5f9"
         # Create the label
-        gh api repos/$REPO/labels -X POST -f name="$LabelName" -f color="$LabelColor"
+        gh api repos/$Repo/labels -X POST -f name="$($LabelName)" -f color="$($LabelColor)"
         Write-Host "Label '$LabelName' created."
     }
-    Write-Output "finished labeling"
+    Write-Output "Past Label Existance Check"
 
     if ($ValidVersion) {
         # Note that git-ls will always fail with exit code 1 when the branch does not exist.
