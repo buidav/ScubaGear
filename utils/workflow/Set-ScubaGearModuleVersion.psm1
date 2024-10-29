@@ -154,13 +154,10 @@ function Test-ScubaGearVersionWorkflowInput {
     $LabelExists = $Labels | Where-Object { $_.name -eq $LabelName }
 
     if (-not $LabelExists) {
-        $LABEL_NAME = "version bump"  # Replace with your desired label name
-        $LABEL_COLOR = "ff0000"  # Replace with your desired label color (hex code)
-        $REPO = "$Owner/repo"  # Replace with your repo (e.g., "username/repo")
-
+        $LabelColor = "d4c5f9"
         # Create the label
-        gh api repos/$REPO/labels -X POST -f name="$LABEL_NAME" -f color="$LABEL_COLOR"
-        Write-Host "Label '$LABEL_NAME' created."
+        gh api repos/$REPO/labels -X POST -f name="$LabelName" -f color="$LabelColor"
+        Write-Host "Label '$LabelName' created."
     }
     Write-Output "finished labeling"
 
