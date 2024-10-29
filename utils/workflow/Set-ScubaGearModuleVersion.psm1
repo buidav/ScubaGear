@@ -144,11 +144,12 @@ function Test-ScubaGearVersionWorkflowInput {
     }
     Write-Output "Past Branch Existance Check"
 
+    #
     # check if version bump label exists
     $LabelName = "version bump"
+    #
     $Repo = "$env:REPO" # This environment variable was set from the workflow
 
-    Write-Output "$($Repo)"
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
     Write-Output "$($Labels)"
@@ -158,7 +159,7 @@ function Test-ScubaGearVersionWorkflowInput {
         $LabelColor = "d4c5f9"
         # Create the label
         gh api repos/$Repo/labels -X POST -f name="$($LabelName)" -f color="$($LabelColor)"
-        Write-Host "Label '$LabelName' created."
+        Write-Host "Label '$LabelName' did not exist, so it was created."
     }
     Write-Output "Past Label Existance Check"
 
