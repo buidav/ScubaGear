@@ -138,7 +138,7 @@ function Test-ScubaGearVersionWorkflowInput {
     if ($LASTEXITCODE -eq 0) {
         $VersionBranchExists = $true
     }
-    if (-not $VersionBranchExists) {
+    if ($VersionBranchExists) {
         git push origin --delete $ScubaGearVersionBumpBranch
         Write-Output "Branch '$ScubaGearVersionBumpBranch' deleted."
     }
@@ -147,7 +147,7 @@ function Test-ScubaGearVersionWorkflowInput {
 
     # check if version bump label exists
     $LabelName = "version bump"
-    $Repo = `${{ github.repository }}`  # Dynamically get the repo (owner/repo)
+    $Repo = "${{ github.repository }}"  # Dynamically get the repo (owner/repo)
 
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
