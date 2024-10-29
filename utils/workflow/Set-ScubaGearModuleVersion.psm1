@@ -147,7 +147,7 @@ function Test-ScubaGearVersionWorkflowInput {
 
     # check if version bump label exists
     $LabelName = "version bump"
-    $Repo = "${{ github.repository }}"  # Dynamically get the repo (owner/repo)
+    $Repo = $env:REPO # This environment variable was set from the workflow
 
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
