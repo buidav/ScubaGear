@@ -192,7 +192,7 @@ function Copy-ModuleToTempLocation {
     [Parameter(Mandatory = $true)]
     [string]
     $ModuleTempPath
- )
+  )
 
   $Leaf = Split-Path -Path $ModuleSourcePath -Leaf
   $ModuleDestinationPath = Join-Path -Path $ModuleTempPath -ChildPath $Leaf
@@ -240,7 +240,7 @@ function Edit-ManifestFile {
     [Parameter(Mandatory = $true)][AllowEmptyString()]
     [string]
     $PrereleaseTag
- )
+)
 
   $ManifestFilePath = Join-Path -Path $ModuleDestinationPath -ChildPath "ScubaGear.psd1"
 

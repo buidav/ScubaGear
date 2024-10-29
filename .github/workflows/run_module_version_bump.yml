@@ -23,6 +23,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check if input is valid
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Import-Module ./utils/workflow/Set-ScubaGearModuleVersion.psm1 -Function Test-ScubaGearVersionWorkflowInput
+          Test-ScubaGearVersionWorkflowInput
+
       - name: Bump ScubaGear Version Number
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
