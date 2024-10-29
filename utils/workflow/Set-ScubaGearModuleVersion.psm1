@@ -148,10 +148,10 @@ function Test-ScubaGearVersionWorkflowInput {
     $LabelName = "version bump"
     $Repo = $env:REPO # This environment variable was set from the workflow
 
-    Write-Output $Repo
+    Write-Output "$($Repo)"
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
-    Write-Output "$($Labels)
+    Write-Output "$($Labels)"
     $LabelExists = $Labels | Where-Object { $_.name -eq $LabelName }
 
     if (-not $LabelExists) {
