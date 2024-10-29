@@ -142,7 +142,7 @@ function Test-ScubaGearVersionWorkflowInput {
         git push origin --delete $ScubaGearVersionBumpBranch
         Write-Output "Branch '$ScubaGearVersionBumpBranch' deleted."
     }
-    Write-Output "Past Brach Existance Check"
+    Write-Output "Past Branch Existance Check"
 
     # check if version bump label exists
     $LabelName = "version bump"
@@ -151,7 +151,7 @@ function Test-ScubaGearVersionWorkflowInput {
     Write-Output $Repo
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
-    Write-Output Labels
+    Write-Output "$($Labels)
     $LabelExists = $Labels | Where-Object { $_.name -eq $LabelName }
 
     if (-not $LabelExists) {
