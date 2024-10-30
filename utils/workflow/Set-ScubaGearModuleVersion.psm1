@@ -106,12 +106,13 @@ function New-PRBody {
 function Test-ScubaGearVersionWorkflowInput {
     <#
     .Description
-    This function does input validation for the module version workflow
+    This function does input validation for the module version bump workflow
     .Functionality
     Internal
     #>
 
     # Check if input is valid SemVer
+    # fail workflow if input is not
     $SemVerPattern = '^(0|[1-9]\d*)(\.(0|[1-9]\d*)){2}(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
     $ValidVersion = $false
     if ($env:NEW_VERSION_NUMBER -match $semverPattern) {
@@ -145,10 +146,10 @@ function Test-ScubaGearVersionWorkflowInput {
     Write-Output "Past Branch Existance Check"
 
     #
-    # check if version bump label exists
+    # Check if version bump label exists
+    # Create one if it does not
     $LabelName = "version bump"
-    #
-    $Repo = "$env:REPO" # This environment variable was set from the workflow
+    $Repo = "$env:REPO" # This environment variable was set from the workflow yaml file
 
     # Check if the label exists otherwise create it
     $Labels = gh api repos/$REPO/labels | ConvertFrom-Json
@@ -158,7 +159,8 @@ function Test-ScubaGearVersionWorkflowInput {
     if (-not $LabelExists) {
         $LabelColor = "d4c5f9"
         # Create the label
-        gh api repos/$Repo/labels -X POST -f name="$($LabelName)" -f color="$($LabelColor)"
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '$SuppressMessage')]
+        $SuppressMessage = gh api repos/$Repo/labels -X POST -f name="$($LabelName)" -f color="$($LabelColor)"
         Write-Host "Label '$LabelName' did not exist, so it was created."
     }
     Write-Output "Past Label Existance Check"
