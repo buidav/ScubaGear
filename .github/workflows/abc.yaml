@@ -1,0 +1,10 @@
+# Purpose: Run the linter against YAML files
+
+name: 0TestAction
+
+# This is a reusable workflow called by the pipeline.
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions: read-all
