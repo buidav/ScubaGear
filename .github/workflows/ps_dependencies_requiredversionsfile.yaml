@@ -8,10 +8,15 @@ on:
     - cron: "15 6 * * 1-5"
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   bump-dependencies:
     runs-on: windows-latest
-
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,7 +32,7 @@ jobs:
 
       - name: Commit changes and create new branch
         id: create_branch
-        shell: pwsh
+        shell: powershell
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -44,19 +49,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
-        shell: pwsh
+        shell: powershell
         run: |
-          $headers = @{
-            Authorization = "Bearer $env:GITHUB_TOKEN"
-            Accept = "application/vnd.github+json"
-          }
-          $body = @{
-            ref = "$env:BRANCH_NAME"
-          } | ConvertTo-Json
-          Invoke-RestMethod -Method Post `
-            -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/run_smoke_test.yaml/dispatches" `
-            -Headers $headers `
-            -Body $body
+          Write-Host "This is where the smoke test would go."
+          # $headers = @{
+          #   Authorization = "Bearer $env:GITHUB_TOKEN"
+          #   Accept = "application/vnd.github+json"
+          # }
+          # $body = @{
+          #   ref = "$env:BRANCH_NAME"
+          # } | ConvertTo-Json
+          # Invoke-RestMethod -Method Post `
+          #   -Uri "https://api.github.com/repos/${{ github.repository }}/actions/workflows/run_smoke_test.yaml/dispatches" `
+          #   -Headers $headers `
+          #   -Body $body
 
       - name: Create pull request
         if: success()
