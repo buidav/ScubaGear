@@ -32,7 +32,7 @@ jobs:
 
       - name: Commit changes and create new branch
         id: create_branch
-        shell: powershell
+        shell: pwsh
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -49,7 +49,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH_NAME: ${{ env.BRANCH_NAME }}
-        shell: powershell
+        shell: pwsh
         run: |
           Write-Host "This is where the smoke test would go."
           # $headers = @{
