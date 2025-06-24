@@ -16,7 +16,7 @@ function Confirm-OpaUpdateRequirements {
 
     # Check if there is already an update branch
     $OPAVersionBumpBranch = "opa-version-bump-$($LatestOPAVersion)"
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification='$Temp required to avoid having PS eat the return code from git.')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = '$Temp required to avoid having PS eat the return code from git.')]
     $Temp = git ls-remote --exit-code --heads origin $OPAVersionBumpBranch
     $OPAVersionBranchExists = $false
     if ($LASTEXITCODE -eq 0) {
@@ -43,11 +43,11 @@ function Confirm-OpaUpdateRequirements {
 
     # Return values in a hashtable
     $ReturnValues = @{
-        "Summary" = $Summary
-        "LatestOPAVersion" = $LatestOPAVersion
+        "Summary"              = $Summary
+        "LatestOPAVersion"     = $LatestOPAVersion
         "OPAVersionBumpBranch" = $OPAVersionBumpBranch
-        "UpdateRequired" = $UpdateRequired
-        "CurrentOPAVersion" = $CurrentOPAVersion
+        "UpdateRequired"       = $UpdateRequired
+        "CurrentOPAVersion"    = $CurrentOPAVersion
     }
     return $ReturnValues
 }
@@ -111,7 +111,7 @@ function Update-OpaVersion {
                 # Splitting lines; current and latest OPA Version will start on the next line
                 $VersionsArr = $_ -split ","
                 # Create a new line, then add the new version on the next line
-                ($VersionsArr[0..($VersionsArr.Length-2)] -join ",") + ","
+                ($VersionsArr[0..($VersionsArr.Length - 2)] -join ",") + ","
                 "    '$CurrentOpaVersion', $DefaultOPAVersionVar $END_VERSIONS_COMMENT" # 4 space indentation
             }
             elseif ($VersionsLength -eq 1) {
@@ -123,7 +123,7 @@ function Update-OpaVersion {
             else {
                 # No splitting lines; appending new current OPA version to acceptable version
                 $VersionsArr = $_ -split ","
-                $NewVersions = ($VersionsArr[0..($VersionsArr.Length-2)] -join ",")
+                $NewVersions = ($VersionsArr[0..($VersionsArr.Length - 2)] -join ",")
                 $NewVersions + ", '$CurrentOpaVersion'" + ", $DefaultOPAVersionVar $END_VERSIONS_COMMENT"
             }
         }
