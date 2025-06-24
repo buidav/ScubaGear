@@ -197,7 +197,7 @@ function New-OpaUpdatePr {
         $OpaVersionBumpBranch
     )
 
-    $UnitTestResults = Run-UnitTestsWithNewOPAVersion -LatestOpaVersion $LatestOpaVersion
+    $UnitTestResults = Invoke-UnitTestsWithNewOPAVersion -LatestOpaVersion $LatestOpaVersion
 
     # Create the PR body
     $PRTemplatePath = Join-Path -Path $RepoPath -ChildPath '.github/pull_request_template.md'
