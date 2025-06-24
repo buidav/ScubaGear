@@ -201,7 +201,7 @@ function New-OpaUpdatePr {
     $RemoveHeader = '# <!-- Use the title to describe PR changes in the imperative mood --> #'
     $NewDescription = "- This pull request was created by a GitHub Action to bump ScubaGear's Open Policy Agent (OPA) executable version dependency.`n - Please fill out the rest of the template that the Action did not cover. `n"
     $NewMotivation = "- Bump to the latest OPA version v$($LatestOpaVersion) `n"
-    $NewTesting = "- Unit Test results: `n $($UnitTestResults) .`n"
+    $NewTesting = "- Rego Unit Test results for $($LatestOpaVersion): `n $($UnitTestResults) `n - A smoke test is also being run against this branch. Check the latest smoke test targeting $($OpaVersionBumpBranch)"
 
     $PrTemplateContent = (Get-Content -Path $PRTemplatePath) | ForEach-Object {
         $DescriptionRegex = $_ -match $Description
