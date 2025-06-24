@@ -133,7 +133,13 @@ function Update-OpaVersion {
     } | Set-Content $SupportModulePath
 }
 
-function Run-UnitTestsWithNewOPAVersion {
+function Invoke-UnitTestsWithNewOPAVersion {
+    <#
+    .SYNOPSIS
+    Run ScubaGear OPA unit tests with the latest version of an OPA executable
+    .PARAMETER LatestOpaVersion
+    The new version in ScubaConfig used to update
+    #>
     param (
         [Parameter(Mandatory = $true)]
         [string]
@@ -142,7 +148,7 @@ function Run-UnitTestsWithNewOPAVersion {
     # Set expected version and OutFile path
     $OPAExe = "opa_windows_amd64.exe"
     $InstallUrl = "https://openpolicyagent.org/downloads/v$($LatestOpaVersion)/$OPAExe"
-    $OutFile="./$($OPAExe)"
+    $OutFile = "./$($OPAExe)"
 
     # Download file
     try {
