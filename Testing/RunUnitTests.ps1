@@ -56,12 +56,19 @@ param (
 
     [Parameter(Mandatory=$false)]
     [switch]
-    $RunAsInstalled
+    $RunAsInstalled,
+
+    [Parameter(Mandatory=$false)]
+    [string]
+    $OPAPath
 )
 
 $ScubaHiddenHome = Join-Path -Path $ScubaParentDirectory -ChildPath '.scubagear'
 $ScubaTools = Join-Path -Path $ScubaHiddenHome -ChildPath 'Tools'
 $OPAExe = Join-Path -Path $ScubaTools -ChildPath 'opa_windows_amd64.exe'
+if ($OPAPath) {
+    $OPAExe = Join-Path -Path $OPAPath -ChildPath 'opa_windows_amd64.exe'
+}
 $ScriptName = $MyInvocation.MyCommand
 $RootPath = Join-Path -Path $PSScriptRoot -ChildPath '../PowerShell/ScubaGear'
 

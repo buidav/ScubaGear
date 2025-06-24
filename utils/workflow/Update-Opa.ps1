@@ -133,6 +133,36 @@ function Update-OpaVersion {
     } | Set-Content $SupportModulePath
 }
 
+function Run-UnitTestsWithNewOPAVersion {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $LatestOpaVersion
+    )
+    # Set expected version and OutFile path
+    $OPAExe = "opa_windows_amd64.exe"
+    $InstallUrl = "https://openpolicyagent.org/downloads/v$($LatestOpaVersion)/$OPAExe"
+    $OutFile="./$($OPAExe)"
+
+    # Download file
+    try {
+        Write-Information "Downloading $InstallUrl"
+        $WebClient = New-Object System.Net.WebClient
+        $WebClient.DownloadFile($InstallUrl, $OutFile)
+        Write-Information ""
+        Write-Information "`nDownload of `"$OutFile`" finished."
+    }
+    catch {
+        Write-Error "An error has occurred: Unable to download OPA executable. To try manually downloading, see details in README under 'Download the required OPA executable'"
+    }
+    finally {
+        $WebClient.Dispose()
+    }
+
+    # Run the unit test with the latest OPA version download
+    .\Testing\RunUnitTests.ps1 -OPAPath "./"
+}
+
 function New-OpaUpdatePr {
     <#
         .SYNOPSIS
@@ -161,6 +191,8 @@ function New-OpaUpdatePr {
         $OpaVersionBumpBranch
     )
 
+    $UnitTestResults = Run-UnitTestsWithNewOPAVersion -LatestOpaVersion $LatestOpaVersion
+
     # Create the PR body
     $PRTemplatePath = Join-Path -Path $RepoPath -ChildPath '.github/pull_request_template.md'
     $Description = '<!-- Describe the "what" of your changes in detail. -->'
@@ -169,7 +201,7 @@ function New-OpaUpdatePr {
     $RemoveHeader = '# <!-- Use the title to describe PR changes in the imperative mood --> #'
     $NewDescription = "- This pull request was created by a GitHub Action to bump ScubaGear's Open Policy Agent (OPA) executable version dependency.`n - Please fill out the rest of the template that the Action did not cover. `n"
     $NewMotivation = "- Bump to the latest OPA version v$($LatestOpaVersion) `n"
-    $NewTesting = "- Currently a human should still check if bumping the OPA version affects ScubaGear.`n"
+    $NewTesting = "- Unit Test results: `n $($UnitTestResults) .`n"
 
     $PrTemplateContent = (Get-Content -Path $PRTemplatePath) | ForEach-Object {
         $DescriptionRegex = $_ -match $Description
